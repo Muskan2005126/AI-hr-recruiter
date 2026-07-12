@@ -1,11 +1,28 @@
 from agents.ranking_agent import rank_candidates
 from fastapi import FastAPI, UploadFile, File
+from fastapi.middleware.cors import CORSMiddleware
+
 import os
 import shutil
+import json
 from agents.skill_matcher import match_skills
 from agents.resume_parser import parse_resume
 from agents.interview_generator import generate_interview_questions
+
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
 
 UPLOAD_FOLDER = "uploads"
 
@@ -29,10 +46,19 @@ def upload_resume(file: UploadFile = File(...)):
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
-    return {
-        "message": "Resume uploaded successfully"
-    }
+    # Parse Resume (Gemini call only once)
+    resume_data = parse_resume(file_path)
 
+    # Create data folder if it doesn't exist
+    os.makedirs("data", exist_ok=True)
+
+    # Save parsed resume
+    with open("data/resume.json", "w", encoding="utf-8") as f:
+        json.dump(resume_data, f, indent=4)
+
+    return {
+        "message": "Resume uploaded and parsed successfully"
+    }
 
 # ---------------- Job Description Upload ----------------
 
@@ -77,8 +103,9 @@ def match_resume():
 @app.get("/match-resume")
 def match_resume_api():
 
-    # Parse Resume
-    resume_data = parse_resume("uploads/resume.pdf")
+    # Read parsed resume from JSON (No Gemini API call)
+    with open("data/resume.json", "r", encoding="utf-8") as file:
+        resume_data = json.load(file)
 
     # Read Job Description
     with open("uploads/job_description.txt", "r", encoding="utf-8") as file:

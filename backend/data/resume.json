@@ -1,0 +1,66 @@
+{
+    "name": "Muskan Jaiswal",
+    "email": "muskanjaiswal1205@gmail.com",
+    "phone": null,
+    "skills": [
+        "Python",
+        "C++",
+        "Javascript",
+        "DSA",
+        "DBMS",
+        "OOPs",
+        "HTML",
+        "CSS",
+        "Git",
+        "GitHub",
+        "VS Code",
+        "Generative AI",
+        "Prompt Engineering"
+    ],
+    "education": [
+        {
+            "institution": "IGDTUW",
+            "degree": "B.Tech in Information Technology",
+            "duration": "2024\u20132028",
+            "gpa": "6.66/10"
+        },
+        {
+            "institution": "Sarvodaya Vidyalaya",
+            "degree": "Class 12",
+            "duration": "2021\u20132023",
+            "percentage": "83.2%"
+        }
+    ],
+    "experience": [
+        {
+            "role": "Generative AI & Prompt Engineering Intern",
+            "company": "Department of IT, IGDTUW",
+            "duration": "June 2025 \u2013 July 2025",
+            "responsibilities": [
+                "Worked on building an AI-based resume builder using Streamlit, HTML/CSS, and Python.",
+                "Used pdfkit and wkhtmltopdf for automated PDF resume generation.",
+                "Applied prompt engineering techniques to improve resume quality and relevance."
+            ]
+        }
+    ],
+    "projects": [
+        {
+            "title": "Web-Based Virtual Assistant",
+            "link": "GitHub Repository",
+            "description": [
+                "Developed a web-based virtual assistant using HTML, CSS, and JavaScript.",
+                "Implemented voice input using the Web Speech API for speech recognition.",
+                "Enabled interactive responses and basic task handling through browser-based automation."
+            ]
+        },
+        {
+            "title": "Stone\u2013Paper\u2013Scissors Game",
+            "link": "GitHub Repository",
+            "description": [
+                "Developed an interactive Stone\u2013Paper\u2013Scissors game using JavaScript with dynamic DOM manipulation.",
+                "Implemented game logic to generate random computer choices and determine win, loss, or draw outcomes.",
+                "Updated user and computer scores in real time and displayed results with visual feedback."
+            ]
+        }
+    ]
+}
