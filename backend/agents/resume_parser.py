@@ -4,10 +4,8 @@ import json
 from dotenv import load_dotenv
 from google import genai
 
-# Load .env
 load_dotenv()
 
-# Gemini Client
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 
@@ -58,4 +56,11 @@ Resume:
     if clean_text.startswith("```json"):
         clean_text = clean_text.replace("```json", "").replace("```", "").strip()
 
-    return json.loads(clean_text)
+    resume_data = json.loads(clean_text)
+
+    os.makedirs("data", exist_ok=True)
+
+    with open("data/resume.json", "w") as file:
+        json.dump(resume_data, file, indent=4)
+
+    return resume_data

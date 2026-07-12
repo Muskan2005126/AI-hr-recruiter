@@ -1,9 +1,10 @@
+from agents.ranking_agent import rank_candidates
 from fastapi import FastAPI, UploadFile, File
 import os
 import shutil
 from agents.skill_matcher import match_skills
 from agents.resume_parser import parse_resume
-
+from agents.interview_generator import generate_interview_questions
 app = FastAPI()
 
 UPLOAD_FOLDER = "uploads"
@@ -89,4 +90,53 @@ def match_resume_api():
     return {
         "status": "success",
         "result": result
+    }
+@app.get("/rank-candidates")
+def rank_candidates_api():
+
+    candidates = [
+        {
+            "name": "Priya Verma",
+            "match_score": 78
+        },
+        {
+            "name": "Rahul Sharma",
+            "match_score": 92
+        },
+        {
+            "name": "Aman Singh",
+            "match_score": 65
+        },
+        {
+            "name": "Neha Gupta",
+            "match_score": 84
+        }
+    ]
+
+    ranked_candidates = rank_candidates(candidates)
+
+    return {
+        "status": "success",
+        "total_candidates": len(ranked_candidates),
+        "ranking": ranked_candidates
+    }
+@app.get("/generate-interview")
+def generate_interview():
+
+    # Load parsed resume
+    with open("data/resume.json", "r") as file:
+        resume_data = file.read()
+
+    # Load job description
+    with open("uploads/job_description.txt", "r") as file:
+        job_description = file.read()
+
+    questions = generate_interview_questions(
+        resume_data,
+        job_description
+    )
+
+    return {
+        "status": "success",
+        "interview_questions": questions
     }
