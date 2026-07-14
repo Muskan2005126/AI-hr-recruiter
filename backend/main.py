@@ -1,5 +1,5 @@
 from agents.ranking_agent import rank_candidates
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 import os
@@ -40,25 +40,25 @@ def home():
 
 @app.post("/upload-resume")
 def upload_resume(file: UploadFile = File(...)):
+    try:
+        file_path = os.path.join(UPLOAD_FOLDER, "resume.pdf")
 
-    file_path = os.path.join(UPLOAD_FOLDER, "resume.pdf")
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
 
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+        resume_data = parse_resume(file_path)
 
-    # Parse Resume (Gemini call only once)
-    resume_data = parse_resume(file_path)
+        os.makedirs("data", exist_ok=True)
 
-    # Create data folder if it doesn't exist
-    os.makedirs("data", exist_ok=True)
+        with open("data/resume.json", "w", encoding="utf-8") as f:
+            json.dump(resume_data, f, indent=4)
 
-    # Save parsed resume
-    with open("data/resume.json", "w", encoding="utf-8") as f:
-        json.dump(resume_data, f, indent=4)
+        return {
+            "message": "Resume uploaded and parsed successfully"
+        }
 
-    return {
-        "message": "Resume uploaded and parsed successfully"
-    }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 # ---------------- Job Description Upload ----------------
 
@@ -103,21 +103,22 @@ def match_resume():
 @app.get("/match-resume")
 def match_resume_api():
 
-    # Read parsed resume from JSON (No Gemini API call)
-    with open("data/resume.json", "r", encoding="utf-8") as file:
-        resume_data = json.load(file)
+    try:
+        with open("data/resume.json", "r", encoding="utf-8") as file:
+            resume_data = json.load(file)
 
-    # Read Job Description
-    with open("uploads/job_description.txt", "r", encoding="utf-8") as file:
-        jd_text = file.read()
+        with open("uploads/job_description.txt", "r", encoding="utf-8") as file:
+            jd_text = file.read()
 
-    # Match Skills
-    result = match_skills(resume_data, jd_text)
+        result = match_skills(resume_data, jd_text)
 
-    return {
-        "status": "success",
-        "result": result
-    }
+        return {
+            "status": "success",
+            "result": result
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 @app.get("/rank-candidates")
 def rank_candidates_api():
 
@@ -150,20 +151,22 @@ def rank_candidates_api():
 @app.get("/generate-interview")
 def generate_interview():
 
-    # Load parsed resume
-    with open("data/resume.json", "r") as file:
-        resume_data = file.read()
+    try:
+        with open("data/resume.json", "r", encoding="utf-8") as file:
+            resume_data = file.read()
 
-    # Load job description
-    with open("uploads/job_description.txt", "r") as file:
-        job_description = file.read()
+        with open("uploads/job_description.txt", "r", encoding="utf-8") as file:
+            job_description = file.read()
 
-    questions = generate_interview_questions(
-        resume_data,
-        job_description
-    )
+        questions = generate_interview_questions(
+            resume_data,
+            job_description
+        )
 
-    return {
-        "status": "success",
-        "interview_questions": questions
-    }
+        return {
+            "status": "success",
+            "interview_questions": questions
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

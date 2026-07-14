@@ -46,21 +46,36 @@ Resume:
 {resume_text}
 """
 
-    response = client.models.generate_content(
-        model="gemini-flash-latest",
-        contents=prompt,
-    )
+    try:
+        response = client.models.generate_content(
+            model="gemini-flash-latest",
+            contents=prompt,
+        )
 
-    clean_text = response.text.strip()
+        clean_text = response.text.strip()
 
-    if clean_text.startswith("```json"):
-        clean_text = clean_text.replace("```json", "").replace("```", "").strip()
+        if clean_text.startswith("```json"):
+            clean_text = (
+                clean_text.replace("```json", "")
+                .replace("```", "")
+                .strip()
+            )
 
-    resume_data = json.loads(clean_text)
+        resume_data = json.loads(clean_text)
+
+    except json.JSONDecodeError:
+        raise Exception(
+            "Gemini returned an invalid JSON response. Please try again."
+        )
+
+    except Exception as e:
+        raise Exception(
+            f"Resume parsing failed: {str(e)}"
+        )
 
     os.makedirs("data", exist_ok=True)
 
-    with open("data/resume.json", "w") as file:
+    with open("data/resume.json", "w", encoding="utf-8") as file:
         json.dump(resume_data, file, indent=4)
 
     return resume_data

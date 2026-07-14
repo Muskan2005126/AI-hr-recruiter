@@ -1,3 +1,5 @@
+import Navbar from "./components/Navbar";
+import DashboardLayout from "./components/DashboardLayout";
 import { useState } from "react";
 // import api from "./api/api";
 import "./App.css";
@@ -9,18 +11,38 @@ import Ranking from "./components/Ranking";
 import InterviewQuestions from "./components/InterviewQuestions";
 function App() {
   return (
-    <div style={{ padding: "40px" }}>
-      <h1>AI HR Recruiter</h1>
+    <DashboardLayout>
+      <Navbar />
 
-      <ResumeUpload />
+     <div className="upload-grid">
+  <div className="upload-card">
+  <ResumeUpload />
+</div>
 
-      <JDUpload />
+<div className="upload-card">
+  <JDUpload />
+</div>
 
-      <MatchResume />
+  
+</div>
 
-      <Ranking />
-      <InterviewQuestions />
-    </div>
+    <div className="dashboard-card"> 
+  <h2>Resume Matching</h2>
+
+  <MatchResume />
+</div>
+
+     <div className="dashboard-card">
+  <h2>Candidate Ranking</h2>
+
+  <Ranking />
+</div>
+     <div className="dashboard-card">
+  <h2>Interview Questions</h2>
+
+  <InterviewQuestions />
+</div>
+    </DashboardLayout>
   );
 }
 

@@ -35,9 +35,31 @@ Format:
 }}
 """
 
-    response = client.models.generate_content(
-        model="gemini-flash-latest",
-        contents=prompt
-    )
+    try:
+        response = client.models.generate_content(
+            model="gemini-flash-latest",
+            contents=prompt
+        )
 
-    return json.loads(response.text)
+        clean_text = response.text.strip()
+
+        if clean_text.startswith("```json"):
+            clean_text = (
+                clean_text.replace("```json", "")
+                .replace("```", "")
+                .strip()
+            )
+
+        result = json.loads(clean_text)
+
+        return result
+
+    except json.JSONDecodeError:
+        raise Exception(
+            "Gemini returned an invalid JSON response while matching skills."
+        )
+
+    except Exception as e:
+        raise Exception(
+            f"Skill matching failed: {str(e)}"
+        )

@@ -1,4 +1,4 @@
-# Python
+# ---------------- Python ----------------
 __pycache__/
 *.pyc
 *.pyo
@@ -10,16 +10,19 @@ backend/venv/
 
 # Environment Variables
 .env
+backend/.env
 
-# VS Code
+# ---------------- React ----------------
+node_modules/
+frontend/node_modules/
+
+# ---------------- Generated Files ----------------
+backend/uploads/
+backend/data/
+
+# ---------------- VS Code ----------------
 .vscode/
 
-# Node
-node_modules/
-
-# Uploads
-backend/uploads/
-
-# OS Files
+# ---------------- OS Files ----------------
 .DS_Store
 Thumbs.db
